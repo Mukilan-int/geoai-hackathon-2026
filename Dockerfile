@@ -27,7 +27,6 @@ COPY app/ ./app/
 COPY schemas/ ./schemas/
 COPY datasets/ ./datasets/
 COPY training/ ./training/
-COPY huggingface_model/ ./huggingface_model/
 
 # Expose HTTP port
 EXPOSE 8000
