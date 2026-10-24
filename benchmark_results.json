@@ -1,0 +1,31 @@
+{
+  "model": "Qwen/Qwen2.5-1.5B-Instruct",
+  "prompt": "Suggest three outdoor activities for a sunny day.",
+  "device": "cpu",
+  "dtype": "torch.float32",
+  "loading_time_seconds": 15.651,
+  "response_time_seconds": 124.564,
+  "input_tokens": 31,
+  "output_tokens": 159,
+  "total_tokens": 190,
+  "tokens_per_second": 1.28,
+  "memory_usage": {
+    "initial_process_ram_mb": 323.7,
+    "ram_after_model_load_mb": 6321.07,
+    "ram_delta_model_mb": 5997.37,
+    "peak_ram_during_generation_mb": 6339.93,
+    "system_total_ram_gb": 31.69,
+    "system_available_ram_gb": 20.9
+  },
+  "hardware_info": {
+    "os": "Windows 11",
+    "cpu": "Intel64 Family 6 Model 154 Stepping 4, GenuineIntel",
+    "physical_cores": 10,
+    "logical_cores": 12,
+    "total_ram_gb": 31.69,
+    "available_ram_gb": 20.9,
+    "cuda_available": false,
+    "cuda_device": "None"
+  },
+  "hardware_limitations": "No CUDA-capable dedicated GPU available. Running on CPU (Intel Core i7-1265U with integrated Intel Iris Xe). Generation speed is bound by CPU memory bandwidth and AVX/vector instruction throughput."
+}

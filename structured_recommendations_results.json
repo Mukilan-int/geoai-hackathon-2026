@@ -1,0 +1,338 @@
+{
+  "metadata": {
+    "evaluation_date": "2026-10-23 07:26:49",
+    "model_metadata": {
+      "candidate_model_id": "OpenVINO/Qwen2.5-1.5B-Instruct-int4-ov",
+      "base_model": "Qwen/Qwen2.5-1.5B-Instruct",
+      "original_author": "Qwen / Alibaba Cloud",
+      "quantized_author": "OpenVINO (Intel)",
+      "quantization_format": "INT4 Weight-Only Quantization (NNCF)",
+      "total_parameters": "1.54 Billion (< 3.0 Billion Hackathon Limit)",
+      "licence": "Apache-2.0",
+      "loading_interface": "optimum.intel.OVModelForCausalLM.from_pretrained",
+      "hardware_device": "Intel Core i7-1265U CPU / Intel Iris Xe iGPU",
+      "hackathon_rules_compliant": true
+    },
+    "schema_used": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "OutdoorActivityRecommendation",
+      "type": "object",
+      "required": [
+        "activity_name",
+        "suitability",
+        "recommended_time_window",
+        "precautions",
+        "reasons",
+        "missing_information_identified",
+        "grounded_facts_used"
+      ],
+      "properties": {
+        "activity_name": {
+          "type": "string",
+          "description": "The specific outdoor activity evaluated or proposed."
+        },
+        "suitability": {
+          "type": "string",
+          "enum": [
+            "recommended",
+            "caution",
+            "not_recommended"
+          ],
+          "description": "Assessment of whether the activity is advisable under the given conditions."
+        },
+        "recommended_time_window": {
+          "type": "string",
+          "description": "Appropriate time of day or condition window (e.g., 'early morning before 8 AM', 'postpone until storm clears')."
+        },
+        "precautions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "description": "Specific, actionable safety precautions."
+        },
+        "reasons": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "description": "Justification based strictly on supplied conditions and constraints."
+        },
+        "missing_information_identified": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of crucial missing facts from the prompt (e.g., location, terrain, user health profile), or empty list if sufficient."
+        },
+        "grounded_facts_used": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of specific facts provided in the prompt that directly informed this recommendation."
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "summary": {
+    "total_scenarios_tested": 5,
+    "direct_json_rate_pct": 0.0,
+    "valid_json_rate_pct": 100.0,
+    "schema_conformance_rate_pct": 100.0,
+    "direct_json_count": 0,
+    "total_valid_json_count": 5,
+    "schema_valid_count": 5
+  },
+  "scenario_evaluations": [
+    {
+      "scenario_id": "scenario_1_high_uv_running",
+      "title": "Running in High UV Conditions",
+      "description": "Midday run requested under extreme UV and heat stress.",
+      "prompt": "User Request: I want to go for an intense 10 km outdoor road run between 12:00 PM and 2:00 PM today.\nSupplied Location: Juhu Beach Promenade, Mumbai, India.\nSupplied Weather: Sunny, 34\u00b0C (93.2\u00b0F), 72% relative humidity, UV Index 11 (Extreme), wind speed 8 km/h.\nSupplied Air Quality: AQI 65 (Satisfactory).\nProvide your recommendation as a JSON object.",
+      "metrics": {
+        "input_tokens": 718,
+        "output_tokens": 180,
+        "latency_seconds": 14.427,
+        "tokens_per_second": 12.48
+      },
+      "json_parsing": {
+        "is_direct_json": false,
+        "is_valid_json": true,
+        "parse_method": "markdown_fence_stripped",
+        "parse_error": null
+      },
+      "schema_validation": {
+        "passed": true,
+        "errors": []
+      },
+      "consistency_and_grounding": {
+        "issues": [
+          "Inconsistent Suitability: Model assigned 'recommended', but expected one of ['caution', 'not_recommended'] given safety factors: ['UV Index 11', 'Extreme UV', '34\u00b0C', 'Midday heat']."
+        ],
+        "suitability_chosen": "recommended"
+      },
+      "parsed_output": {
+        "activity_name": "intense 10 km outdoor road run",
+        "suitability": "recommended",
+        "recommended_time_window": "between 12:00 PM and 2:00 PM",
+        "precautions": [
+          "wear appropriate footwear",
+          "apply sunscreen",
+          "carry water and snacks"
+        ],
+        "reasons": [
+          "UV Index 11 requires protection against sunburn and skin cancer",
+          "wind speed 8 km/h may affect running form and comfort",
+          "AQI 65 indicates good air quality but should still consider pollution sources"
+        ],
+        "missing_information_identified": [],
+        "grounded_facts_used": [
+          "Juhu Beach Promenade, Mumbai, India",
+          "weather conditions during the recommended time window",
+          "air quality index"
+        ]
+      },
+      "raw_output": "```json\n{\n  \"activity_name\": \"intense 10 km outdoor road run\",\n  \"suitability\": \"recommended\",\n  \"recommended_time_window\": \"between 12:00 PM and 2:00 PM\",\n  \"precautions\": [\"wear appropriate footwear\", \"apply sunscreen\", \"carry water and snacks\"],\n  \"reasons\": [\n    \"UV Index 11 requires protection against sunburn and skin cancer\",\n    \"wind speed 8 km/h may affect running form and comfort\",\n    \"AQI 65 indicates good air quality but should still consider pollution sources\"\n  ],\n  \"missing_information_identified\": [],\n  \"grounded_facts_used\": [\n    \"Juhu Beach Promenade, Mumbai, India\",\n    \"weather conditions during the recommended time window\",\n    \"air quality index\"\n  ]\n}\n```"
+    },
+    {
+      "scenario_id": "scenario_2_cycling_rain_forecast",
+      "title": "Cycling with Rain in Forecast",
+      "description": "Road cycling planned right before a forecasted thunderstorm with high wind gusts.",
+      "prompt": "User Request: I am planning a 2-hour outdoor road cycling workout starting in 15 minutes.\nSupplied Location: Sinhagad Ghat Road, Pune, Maharashtra.\nSupplied Weather: Heavily overcast, 25\u00b0C (77\u00b0F), 85% chance of severe thunderstorm and heavy downpour within 45 minutes, wind gusts up to 45 km/h.\nSupplied Road Conditions: Mountainous winding roads, currently dry but rapidly deteriorating.\nProvide your recommendation as a JSON object.",
+      "metrics": {
+        "input_tokens": 718,
+        "output_tokens": 150,
+        "latency_seconds": 26.572,
+        "tokens_per_second": 5.64
+      },
+      "json_parsing": {
+        "is_direct_json": false,
+        "is_valid_json": true,
+        "parse_method": "markdown_fence_stripped",
+        "parse_error": null
+      },
+      "schema_validation": {
+        "passed": true,
+        "errors": []
+      },
+      "consistency_and_grounding": {
+        "issues": [],
+        "suitability_chosen": "not_recommended"
+      },
+      "parsed_output": {
+        "activity_name": "road cycling",
+        "suitability": "not_recommended",
+        "recommended_time_window": "",
+        "precautions": [
+          "avoid riding during severe storms",
+          "use caution when visibility is poor due to rain"
+        ],
+        "reasons": [
+          "rainy conditions increase risk of slipping and falling",
+          "wind gusts may affect balance and control",
+          "current road conditions indicate deterioration"
+        ],
+        "missing_information_identified": [
+          "weather conditions",
+          "terrain specifics",
+          "cyclist's physical state"
+        ],
+        "grounded_facts_used": [
+          "heavily overcast sky",
+          "25\u00b0C temperature",
+          "raining chance within 45 minutes"
+        ]
+      },
+      "raw_output": "```json\n{\n  \"activity_name\": \"road cycling\",\n  \"suitability\": \"not_recommended\",\n  \"recommended_time_window\": \"\",\n  \"precautions\": [\"avoid riding during severe storms\", \"use caution when visibility is poor due to rain\"],\n  \"reasons\": [\n    \"rainy conditions increase risk of slipping and falling\",\n    \"wind gusts may affect balance and control\",\n    \"current road conditions indicate deterioration\"\n  ],\n  \"missing_information_identified\": [\"weather conditions\", \"terrain specifics\", \"cyclist's physical state\"],\n  \"grounded_facts_used\": [\"heavily overcast sky\", \"25\u00b0C temperature\", \"raining chance within 45 minutes\"]\n}\n```"
+    },
+    {
+      "scenario_id": "scenario_3_picnic_missing_location",
+      "title": "Picnic with Missing Location Information",
+      "description": "Family asks for outdoor picnic advice with pleasant weather but completely omitted location and park details.",
+      "prompt": "User Request: We are a family of four planning an outdoor picnic for 3 hours. What specific park shelters and amenities are available for us?\nSupplied Location: [NOT PROVIDED / UNKNOWN]\nSupplied Weather: Clear skies, 24\u00b0C (75.2\u00b0F), 45% humidity, UV Index 4 (Moderate), wind speed 10 km/h.\nSupplied Air Quality: AQI 42 (Good).\nProvide your recommendation as a JSON object.",
+      "metrics": {
+        "input_tokens": 707,
+        "output_tokens": 120,
+        "latency_seconds": 23.828,
+        "tokens_per_second": 5.04
+      },
+      "json_parsing": {
+        "is_direct_json": false,
+        "is_valid_json": true,
+        "parse_method": "markdown_fence_stripped",
+        "parse_error": null
+      },
+      "schema_validation": {
+        "passed": true,
+        "errors": []
+      },
+      "consistency_and_grounding": {
+        "issues": [
+          "Missing Information Omission: Prompt had '[NOT PROVIDED / UNKNOWN]' location, but model failed to identify missing location in 'missing_information_identified'."
+        ],
+        "suitability_chosen": "recommended"
+      },
+      "parsed_output": {
+        "activity_name": "Picnic at Park",
+        "suitability": "recommended",
+        "recommended_time_window": "midday",
+        "precautions": [
+          "check local regulations",
+          "avoid high winds"
+        ],
+        "reasons": [
+          "ensure privacy",
+          "enjoy the outdoors safely",
+          "use sheltered areas for comfort"
+        ],
+        "missing_information_identified": [],
+        "grounded_facts_used": [
+          "weather conditions",
+          "time of day",
+          "desired duration of the event"
+        ]
+      },
+      "raw_output": "```json\n{\n  \"activity_name\": \"Picnic at Park\",\n  \"suitability\": \"recommended\",\n  \"recommended_time_window\": \"midday\",\n  \"precautions\": [\"check local regulations\", \"avoid high winds\"],\n  \"reasons\": [\n    \"ensure privacy\",\n    \"enjoy the outdoors safely\",\n    \"use sheltered areas for comfort\"\n  ],\n  \"missing_information_identified\": [],\n  \"grounded_facts_used\": [\n    \"weather conditions\",\n    \"time of day\",\n    \"desired duration of the event\"\n  ]\n}\n```"
+    },
+    {
+      "scenario_id": "scenario_4_hiking_poor_air_quality",
+      "title": "Hiking Recommendation with Poor Air Quality",
+      "description": "Strenuous uphill hike planned under severe, hazardous air pollution.",
+      "prompt": "User Request: Our hiking club is planning a strenuous 4-hour morning summit hike on steep rugged terrain.\nSupplied Location: Aravalli Trail Ridge, Southern Haryana.\nSupplied Weather: Cool hazy morning, 19\u00b0C (66.2\u00b0F), wind 4 km/h.\nSupplied Air Quality: AQI 345 (Severe / Hazardous, PM2.5 concentration extremely high).\nProvide your recommendation as a JSON object.",
+      "metrics": {
+        "input_tokens": 703,
+        "output_tokens": 162,
+        "latency_seconds": 28.886,
+        "tokens_per_second": 5.61
+      },
+      "json_parsing": {
+        "is_direct_json": false,
+        "is_valid_json": true,
+        "parse_method": "markdown_fence_stripped",
+        "parse_error": null
+      },
+      "schema_validation": {
+        "passed": true,
+        "errors": []
+      },
+      "consistency_and_grounding": {
+        "issues": [],
+        "suitability_chosen": "not_recommended"
+      },
+      "parsed_output": {
+        "activity_name": "hiking",
+        "suitability": "not_recommended",
+        "recommended_time_window": "",
+        "precautions": [
+          "avoid wet or slippery surfaces",
+          "wear appropriate footwear for uneven terrain"
+        ],
+        "reasons": [
+          "the trail has significant elevation changes requiring careful navigation",
+          "windy conditions can affect visibility and increase fatigue",
+          "AQI levels indicate poor air quality, which could compromise lung function during exertion"
+        ],
+        "missing_information_identified": [],
+        "grounded_facts_used": [
+          "Aravalli Trail Ridge, Southern Haryana",
+          "cool hazy morning, 19\u00b0C (66.2\u00b0F)",
+          "wind 4 km/h"
+        ]
+      },
+      "raw_output": "```json\n{\n  \"activity_name\": \"hiking\",\n  \"suitability\": \"not_recommended\",\n  \"recommended_time_window\": \"\",\n  \"precautions\": [\"avoid wet or slippery surfaces\", \"wear appropriate footwear for uneven terrain\"],\n  \"reasons\": [\n    \"the trail has significant elevation changes requiring careful navigation\",\n    \"windy conditions can affect visibility and increase fatigue\",\n    \"AQI levels indicate poor air quality, which could compromise lung function during exertion\"\n  ],\n  \"missing_information_identified\": [],\n  \"grounded_facts_used\": [\n    \"Aravalli Trail Ridge, Southern Haryana\",\n    \"cool hazy morning, 19\u00b0C (66.2\u00b0F)\",\n    \"wind 4 km/h\"\n  ]\n}\n```"
+    },
+    {
+      "scenario_id": "scenario_5_older_adult_nature_walk",
+      "title": "Activity Recommendation for an Older Adult",
+      "description": "Outdoor activity request for a 74-year-old with joint sensitivity and mild mobility constraints.",
+      "prompt": "User Request: Recommend a pleasant outdoor activity for a 74-year-old individual who has mild knee osteoarthritis and uses a walking cane.\nSupplied Location: Cubbon Park, Central Bengaluru, Karnataka.\nSupplied Weather: Partly cloudy, 23\u00b0C (73.4\u00b0F), 58% humidity, UV Index 5 (Moderate), gentle breeze 7 km/h.\nSupplied Air Quality: AQI 55 (Satisfactory).\nProvide your recommendation as a JSON object.",
+      "metrics": {
+        "input_tokens": 714,
+        "output_tokens": 159,
+        "latency_seconds": 28.694,
+        "tokens_per_second": 5.54
+      },
+      "json_parsing": {
+        "is_direct_json": false,
+        "is_valid_json": true,
+        "parse_method": "markdown_fence_stripped",
+        "parse_error": null
+      },
+      "schema_validation": {
+        "passed": true,
+        "errors": []
+      },
+      "consistency_and_grounding": {
+        "issues": [],
+        "suitability_chosen": "recommended"
+      },
+      "parsed_output": {
+        "activity_name": "Cubbon Park Walk",
+        "suitability": "recommended",
+        "recommended_time_window": "morning after rain showers",
+        "precautions": [
+          "wear appropriate footwear",
+          "use a walking stick for support"
+        ],
+        "reasons": [
+          "the moderate temperature and humidity levels make it suitable for most activities",
+          "the gentle breeze helps maintain comfort during exercise",
+          "the availability of a walking cane ensures safety while walking"
+        ],
+        "missing_information_identified": [],
+        "grounded_facts_used": [
+          "partly cloudy weather",
+          "mild temperature",
+          "humid environment",
+          "gentle wind speed",
+          "availability of a walking cane"
+        ]
+      },
+      "raw_output": "```json\n{\n  \"activity_name\": \"Cubbon Park Walk\",\n  \"suitability\": \"recommended\",\n  \"recommended_time_window\": \"morning after rain showers\",\n  \"precautions\": [\"wear appropriate footwear\", \"use a walking stick for support\"],\n  \"reasons\": [\n    \"the moderate temperature and humidity levels make it suitable for most activities\",\n    \"the gentle breeze helps maintain comfort during exercise\",\n    \"the availability of a walking cane ensures safety while walking\"\n  ],\n  \"missing_information_identified\": [],\n  \"grounded_facts_used\": [\n    \"partly cloudy weather\",\n    \"mild temperature\",\n    \"humid environment\",\n    \"gentle wind speed\",\n    \"availability of a walking cane\"\n  ]\n}\n```"
+    }
+  ]
+}

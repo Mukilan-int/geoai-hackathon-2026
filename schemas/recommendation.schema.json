@@ -1,0 +1,110 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "OutdoorActivityRecommendation",
+  "description": "Schema for grounded GeoAI outdoor activity recommendations compliant with GeoAI Hackathon 2026 rulebook.",
+  "type": "object",
+  "required": [
+    "activity_name",
+    "suitability",
+    "recommended_time_window",
+    "precautions",
+    "reasons",
+    "missing_information_identified",
+    "grounded_facts_used",
+    "safety_assessment",
+    "candidate_places",
+    "data_sources_used",
+    "uncertainties_and_limitations"
+  ],
+  "properties": {
+    "activity_name": {
+      "type": "string",
+      "description": "The specific outdoor activity evaluated."
+    },
+    "suitability": {
+      "type": "string",
+      "enum": ["recommended", "caution", "not_recommended"],
+      "description": "Deterministic and grounded assessment of activity suitability."
+    },
+    "recommended_time_window": {
+      "type": "string",
+      "description": "Best time window for the activity, or an explanation if no safe window exists."
+    },
+    "precautions": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1,
+      "description": "Specific, actionable safety precautions grounded in retrieved conditions."
+    },
+    "reasons": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1,
+      "description": "Grounded justifications citing specific weather, air quality, or geospatial conditions."
+    },
+    "missing_information_identified": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Crucial missing facts (e.g. unverified forecast, unverified location, missing user constraints)."
+    },
+    "grounded_facts_used": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Verifiable factual observations retrieved from live services used in the evaluation."
+    },
+    "safety_assessment": {
+      "type": "object",
+      "required": ["guardrail_status", "triggered_rules", "override_applied", "source_guidelines"],
+      "properties": {
+        "guardrail_status": {
+          "type": "string",
+          "enum": ["CLEAR", "ADVISORY", "BLOCKED"]
+        },
+        "triggered_rules": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "override_applied": {
+          "type": "boolean"
+        },
+        "source_guidelines": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "candidate_places": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "category", "distance_km", "suitability_score", "source_evidence"],
+        "properties": {
+          "name": { "type": "string" },
+          "category": { "type": "string" },
+          "distance_km": { "type": ["number", "null"] },
+          "suitability_score": { "type": "number" },
+          "source_evidence": { "type": "string" }
+        }
+      }
+    },
+    "data_sources_used": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["provider", "service_type", "retrieval_timestamp", "attribution"],
+        "properties": {
+          "provider": { "type": "string" },
+          "service_type": { "type": "string" },
+          "retrieval_timestamp": { "type": "string" },
+          "attribution": { "type": "string" }
+        }
+      }
+    },
+    "uncertainties_and_limitations": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Explicit statement of data uncertainties, forecast horizons, and unverified hazards."
+    }
+  },
+  "additionalProperties": false
+}

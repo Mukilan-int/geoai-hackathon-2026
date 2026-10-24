@@ -1,0 +1,77 @@
+{
+  "benchmark_metadata": {
+    "date": "2026-10-23 07:13:28",
+    "model_id": "OpenVINO/Qwen2.5-1.5B-Instruct-int4-ov",
+    "base_model": "Qwen/Qwen2.5-1.5B-Instruct",
+    "loader": "optimum.intel.OVModelForCausalLM.from_pretrained",
+    "quantization": "INT4",
+    "license": "Apache-2.0"
+  },
+  "hardware_info": {
+    "os": "Windows 11",
+    "cpu": "Intel64 Family 6 Model 154 Stepping 4, GenuineIntel",
+    "physical_cores": 10,
+    "logical_cores": 12,
+    "total_ram_gb": 31.69,
+    "available_ram_gb": 19.0,
+    "gpu_detected": "Intel(R) Iris(R) Xe Graphics (iGPU)",
+    "cuda_available": false
+  },
+  "memory_baseline_mb": 458.04,
+  "devices_tested": {
+    "CPU": {
+      "device_name": "OpenVINO CPU (i7-1265U)",
+      "load_time_seconds": 5.641,
+      "ram_after_load_mb": 685.54,
+      "ram_delta_mb": 134.18,
+      "peak_ram_mb": 2512.76,
+      "test_1_baseline_prompt": {
+        "device": "OpenVINO CPU (i7-1265U)",
+        "prompt": "Suggest three outdoor activities for a sunny day.",
+        "input_tokens": 31,
+        "output_tokens": 41,
+        "generation_time_sec": 4.157,
+        "throughput_tokens_per_sec": 9.86,
+        "mem_peak_mb": 2446.66,
+        "response": "1. Go hiking or cycling in the park.\n  2. Play frisbee or catch with friends and family members.\n  3. Have a picnic at a local park or beach."
+      },
+      "test_2_geoai_prompt": {
+        "device": "OpenVINO CPU (i7-1265U)",
+        "prompt": "Location: Sanjay Gandhi National Park, Mumbai, India.\nCurrent Weather: Sunny, 32\u00b0C (89.6\u00b0F), 65% humidity, UV index 8 (Very High), wind speed 12 km/h.\nAir Quality: Moderate (AQI 85).\nGiven the supplied weather and location information, recommend an outdoor activity, a suitable time, relevant precautions, and the reasons for your recommendation. Do not invent missing data.",
+        "input_tokens": 123,
+        "output_tokens": 256,
+        "generation_time_sec": 23.131,
+        "throughput_tokens_per_sec": 11.07,
+        "mem_peak_mb": 2512.76,
+        "response": "**Outdoor Activity Recommendation:** Hiking at Sanjay Gandhi National Park\n\n**Recommended Time:** Morning or Late Afternoon\n\n**Reasons for Recommendation:**\n\n1. **Weather Conditions**: The current conditions of sunny skies with moderate temperatures make it ideal for outdoor activities. The high humidity level is manageable during these times.\n\n2. **Activity Suitability**: Hiking through Sanjay Gandhi National Park offers a unique opportunity to explore nature while enjoying pleasant weather conditions. The park's diverse terrain provides varied landscapes that can be explored on foot.\n\n3. **Precautions**:\n   - **UV Index**: Since the UV index is very high, wear broad-brimmed hats, sunglasses, and use sunscreen with a high SPF rating.\n   - **Humidity**: Keep hydrated by drinking plenty of water as the humidity levels may cause discomfort if not managed properly.\n   - **Wind Speed**: Be cautious of strong winds which could affect visibility and comfort. Consider wearing appropriate clothing to protect against gusty conditions.\n\n4. **Relevant Precautions**:\n   - **Sun Protection**: Use sunscreens and seek shade when necessary.\n   - **Hydration**: Stay well-hydrated due to the high humidity and potential heat stress from the warm climate.\n   - **Wear"
+      }
+    },
+    "GPU": {
+      "device_name": "OpenVINO GPU (Iris Xe iGPU)",
+      "load_time_seconds": 15.35,
+      "ram_after_load_mb": 2800.93,
+      "ram_delta_mb": 288.17,
+      "peak_ram_mb": 2979.62,
+      "test_1_baseline_prompt": {
+        "device": "OpenVINO GPU (Iris Xe iGPU)",
+        "prompt": "Suggest three outdoor activities for a sunny day.",
+        "input_tokens": 31,
+        "output_tokens": 37,
+        "generation_time_sec": 2.248,
+        "throughput_tokens_per_sec": 16.46,
+        "mem_peak_mb": 2979.62,
+        "response": "1. Go hiking or cycling in the park.\n  2. Have a picnic with friends and family.\n  3. Play frisbee or catch ball games outdoors."
+      },
+      "test_2_geoai_prompt": {
+        "device": "OpenVINO GPU (Iris Xe iGPU)",
+        "prompt": "Location: Sanjay Gandhi National Park, Mumbai, India.\nCurrent Weather: Sunny, 32\u00b0C (89.6\u00b0F), 65% humidity, UV index 8 (Very High), wind speed 12 km/h.\nAir Quality: Moderate (AQI 85).\nGiven the supplied weather and location information, recommend an outdoor activity, a suitable time, relevant precautions, and the reasons for your recommendation. Do not invent missing data.",
+        "input_tokens": 123,
+        "output_tokens": 238,
+        "generation_time_sec": 18.969,
+        "throughput_tokens_per_sec": 12.55,
+        "mem_peak_mb": 2950.96,
+        "response": "**Outdoor Activity Recommendation:** Hiking at Sanjay Gandhi National Park\n\n**Recommended Time:** Morning or Late Afternoon\n\n**Reasons for Recommendation:**\n\n1. **Weather Conditions**: The current conditions of sunny skies with moderate temperatures make it ideal for outdoor activities. The high humidity level is manageable during these times.\n\n2. **Activity Suitability**: Hiking through Sanjay Gandhi National Park offers a unique experience as you explore its natural beauty while enjoying the cool breeze from the park's surroundings.\n\n**Precautions:**\n- **Sun Protection**: Wear sunglasses to protect against glare and UV rays, which can be particularly intense on clear days like today.\n- **Hydration**: Bring plenty of water due to the higher humidity levels, which can cause dehydration more quickly than in drier climates.\n- **Clothing**: Pack light layers that can cover up if needed, especially considering the temperature could drop slightly depending on the season or specific areas within the park.\n- **Wind Protection**: Be cautious of strong winds; they can create microclimates that may affect visibility or comfort.\n\nThis combination of factors makes hiking through Sanjay Gandhi National Park both enjoyable and safe under the given conditions."
+      }
+    }
+  }
+}
