@@ -80,7 +80,7 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 from peft import PeftModel
 
 base_model_id = "Qwen/Qwen2.5-1.5B-Instruct"
-adapter_id = "YOUR_HF_USERNAME/geoai-qwen2.5-1.5b-outdoor-lora"
+adapter_id = "Erevanox/geoai-qwen2.5-1.5b-outdoor-lora"
 
 # 1. Load Tokenizer
 tokenizer = AutoTokenizer.from_pretrained(base_model_id)

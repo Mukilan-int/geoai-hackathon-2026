@@ -1,72 +1,175 @@
 # GeoAI Hackathon 2026 — Grounded Outdoor Activity Recommendation Backend
 
+[![Live API](https://img.shields.io/badge/Live_API-Render-brightgreen?logo=render&style=flat-square)](https://geoai-hackathon-2026.onrender.com)
+[![API Docs](https://img.shields.io/badge/API_Docs-Swagger_UI-blue?logo=swagger&style=flat-square)](https://geoai-hackathon-2026.onrender.com/docs)
+[![Hugging Face](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-geoai--qwen2.5--1.5b--outdoor--lora-yellow?style=flat-square)](https://huggingface.co/Erevanox/geoai-qwen2.5-1.5b-outdoor-lora)
+[![GitHub Repo](https://img.shields.io/badge/GitHub-geoai--hackathon--2026-black?logo=github&style=flat-square)](https://github.com/Mukilan-int/geoai-hackathon-2026)
+[![License: Apache-2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg?style=flat-square)](LICENSE)
+[![Python: 3.10+](https://img.shields.io/badge/Python-3.10%20%7C%203.11%20%7C%203.12-informational?logo=python&style=flat-square)](https://www.python.org/)
+[![Model Track](https://img.shields.io/badge/Track-%E2%89%A4_3B_Parameters_%281.54B_Base%29-purple?style=flat-square)](#)
+
 **Host Institution:** Centre of Studies in Resources Engineering (CSRE), Indian Institute of Technology Bombay (IIT Bombay)  
 **Track:** Open-Weight Small Language Model ($\le 3\text{B}$ Parameters)  
-**Live API Endpoint:** `https://YOUR_PUBLIC_APP_NAME.onrender.com` *(Local: `http://localhost:8000`)*  
-**Hugging Face Model Repository:** `https://huggingface.co/YOUR_HF_USERNAME/geoai-qwen2.5-1.5b-outdoor-lora`  
-**GitHub Repository:** `https://github.com/YOUR_USERNAME/geoai-hackathon-2026`  
-**Base Model:** `Qwen/Qwen2.5-1.5B-Instruct` (1.54B Parameters, Apache-2.0)  
-**Quantized Inference Model:** `OpenVINO/Qwen2.5-1.5B-Instruct-int4-ov`  
-**Fine-Tuned Adapter:** `huggingface_model/` (PEFT LoRA, Apache-2.0)  
+**Live API Endpoint:** [https://geoai-hackathon-2026.onrender.com](https://geoai-hackathon-2026.onrender.com)  
+**Interactive API Documentation:** [https://geoai-hackathon-2026.onrender.com/docs](https://geoai-hackathon-2026.onrender.com/docs)  
+**Hugging Face Model Repository:** [https://huggingface.co/Erevanox/geoai-qwen2.5-1.5b-outdoor-lora](https://huggingface.co/Erevanox/geoai-qwen2.5-1.5b-outdoor-lora)  
+**GitHub Repository:** [https://github.com/Mukilan-int/geoai-hackathon-2026](https://github.com/Mukilan-int/geoai-hackathon-2026)  
+**Base Model:** [`Qwen/Qwen2.5-1.5B-Instruct`](https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct) (1.54B Parameters, Apache-2.0)  
+**Quantized Inference Model:** `OpenVINO/Qwen2.5-1.5B-Instruct-int4-ov` (Intel OpenVINO INT4)  
+**Fine-Tuned Adapter:** [`Erevanox/geoai-qwen2.5-1.5b-outdoor-lora`](https://huggingface.co/Erevanox/geoai-qwen2.5-1.5b-outdoor-lora) (PEFT LoRA, Apache-2.0)  
 
 ---
 
-## 1. Project Overview & Rolebook Objectives
+## Quick Reference Links
 
-This project implements a fully compliant, production-grade Python backend for an AI assistant that evaluates where, when, and how to safely engage in outdoor activities, what precautions to take, and when an activity should be strictly avoided.
-
-### Key Capabilities:
-- **Small Language Model Under 3B Parameters:** Utilizes `Qwen2.5-1.5B-Instruct` (1.54B parameters) accelerated via Intel OpenVINO INT4 quantization (delivering 11–16 tokens/sec on standard Intel Core i7 / Iris Xe laptops).
-- **10 Supported Outdoor Activities:** Deep domain safety profiles for Running/Jogging, Cycling, Golf, Cricket, Football, Tennis, Hiking, Picnics, Outdoor Events, and Photography.
-- **Deterministic Safety Guardrails:** Hard, sourced safety rules based on WHO UV Index, NOAA Heat Stress, NWS Lightning, and EPA AQI standards that automatically override model optimism.
-- **Zero Proprietary API Dependency:** All features run on open-source weights and free, open-access live services (Open-Meteo and OpenStreetMap) without requiring GPT-4, Claude, or paid API keys.
-- **Strict Schema-Constrained Output:** Emits machine-readable JSON adhering to `schemas/recommendation.schema.json` with fact-level provenance tracing.
+| Component | URL / Location | Description |
+| :--- | :--- | :--- |
+| **Live Deployed API** | [geoai-hackathon-2026.onrender.com](https://geoai-hackathon-2026.onrender.com) | Public production backend on Render (Docker) |
+| **Interactive API Docs** | [/docs](https://geoai-hackathon-2026.onrender.com/docs) \| [/redoc](https://geoai-hackathon-2026.onrender.com/redoc) | Live Swagger UI and ReDoc interface |
+| **Hugging Face Model** | [Erevanox/geoai-qwen2.5-1.5b-outdoor-lora](https://huggingface.co/Erevanox/geoai-qwen2.5-1.5b-outdoor-lora) | Uploaded LoRA adapter safetensors & model card |
+| **GitHub Repository** | [Mukilan-int/geoai-hackathon-2026](https://github.com/Mukilan-int/geoai-hackathon-2026) | Complete codebase, schemas, tests, and training code |
+| **Presentation Deck** | [`presentation.pptx`](presentation.pptx) \| [`PRESENTATION.md`](PRESENTATION.md) | 6-slide widescreen presentation with speaking notes |
+| **Validation Reports** | [`EVALUATION_REPORT.md`](EVALUATION_REPORT.md) \| [`RULEBOOK_COMPLIANCE.md`](RULEBOOK_COMPLIANCE.md) | Benchmark reports, compliance matrix, and metrics |
 
 ---
 
-## 2. Quickstart Setup Guide (Beginner Friendly)
+## 1. Project Overview & Hackathon Scope
 
-### Prerequisites:
-- Python 3.10, 3.11, or 3.12 (Python 3.14 compatible)
-- Git (optional, for version control)
+This project implements a fully compliant, production-grade Python backend for an autonomous AI assistant that evaluates **where, when, and how to safely engage in outdoor activities**, identifies necessary precautions, and deterministically blocks activities when environmental conditions pose severe health or safety hazards.
 
-### Step 1: Clone or Navigate to the Workspace
-```bash
-cd "d:/GeoAI/Qwen test-1"
+```
+                    ┌─────────────────────────────────────────┐
+                    │       User Query / POST /recommend      │
+                    │   (Coordinates, Placename, or Natural)  │
+                    └────────────────────┬────────────────────┘
+                                         │
+                 ┌───────────────────────┴───────────────────────┐
+                 ▼                                               ▼
+  ┌───────────────────────────────┐               ┌───────────────────────────────┐
+  │   Open-Meteo Live Forecast   │               │ OpenStreetMap Nominatim/POIs  │
+  │  • Temp, Apparent Heat Index  │               │  • Geocoding to Lat/Lon       │
+  │  • Solar UV Index, Gale Wind  │               │  • Overpass Park & Venue POIs │
+  │  • EPA Air Quality (PM2.5/AQI)│               │  • OSRM Walking Distances     │
+  └──────────────┬────────────────┘               └───────────────┬───────────────┘
+                 │                                               │
+                 └───────────────────────┬───────────────────────┘
+                                         ▼
+                    ┌─────────────────────────────────────────┐
+                    │       Grounded Context Assembler        │
+                    │  (Synthesizes Real-Time Fact Evidence)  │
+                    └────────────────────┬────────────────────┘
+                                         │
+                                         ▼
+                    ┌─────────────────────────────────────────┐
+                    │    Qwen2.5-1.5B-Instruct + LoRA         │
+                    │  (OpenVINO INT4 / PyTorch PEFT Adapter) │
+                    └────────────────────┬────────────────────┘
+                                         │
+                                         ▼
+                    ┌─────────────────────────────────────────┐
+                    │    Deterministic Safety Guardrails      │
+                    │  • WHO UV ≥ 11 Extreme Hazard           │
+                    │  • NOAA Heat Index ≥ 40°C Heatstroke    │
+                    │  • EPA AQI > 300 Hazardous Air          │
+                    │  • NWS Lightning / Convective Storms    │
+                    │  *Overrides optimistic model outputs*   │
+                    └────────────────────┬────────────────────┘
+                                         │
+                                         ▼
+                    ┌─────────────────────────────────────────┐
+                    │   Strict Validated JSON Output Response │
+                    │    (schemas/recommendation.schema.json) │
+                    └─────────────────────────────────────────┘
 ```
 
-### Step 2: Create and Activate Virtual Environment (Recommended)
+### Key Capabilities:
+- **Strictly Under 3B Parameters Track:** Powered by `Qwen2.5-1.5B-Instruct` (1.54B parameters) accelerated via Intel OpenVINO INT4 quantization (delivering 11–16 tokens/sec on standard Intel Core i7 CPU, and low latency in Docker).
+- **10 Fully Supported Outdoor Activities:** Deep domain safety profiles for Running/Jogging, Cycling, Golf, Cricket, Football, Tennis, Hiking, Picnics, Outdoor Events, and Photography.
+- **Deterministic Safety Guardrails:** Hard, scientifically sourced safety rules based on WHO UV Index, NOAA Heat Stress, NWS Lightning, and EPA AQI standards that automatically override model optimism and guarantee human safety.
+- **Zero Proprietary API Dependency:** Entire stack runs on open-weight models and free, open-access live services (Open-Meteo and OpenStreetMap) without requiring GPT-4, Claude, or paid commercial API keys.
+- **Strict Schema-Constrained Output:** Emits machine-readable JSON adhering to `schemas/recommendation.schema.json` with fact-level provenance tracing, candidate venue evidence, and explicit uncertainty disclosures.
+
+---
+
+## 2. Quickstart & Testing
+
+### Option A: Test the Live Cloud API (Zero Setup Required)
+
+The backend is deployed and active on Render:
+- **Root URL:** `https://geoai-hackathon-2026.onrender.com`
+- **Interactive Documentation:** `https://geoai-hackathon-2026.onrender.com/docs`
+
+Test the live endpoint with `curl`:
 ```bash
-# On Windows PowerShell:
+curl -X GET "https://geoai-hackathon-2026.onrender.com/health"
+```
+
+Generate a live recommendation via cURL:
+```bash
+curl -X POST "https://geoai-hackathon-2026.onrender.com/recommend" \
+     -H "Content-Type: application/json" \
+     -d '{
+       "activity": "Running or Jogging",
+       "location": "Bandra Bandstand, Mumbai",
+       "constraints": { "age": 28 }
+     }'
+```
+
+---
+
+### Option B: Local Setup with Python Virtualenv
+
+#### Prerequisites:
+- Python 3.10, 3.11, or 3.12 (Python 3.14 compatible)
+- Git
+
+```bash
+# 1. Clone repository
+git clone https://github.com/Mukilan-int/geoai-hackathon-2026.git
+cd geoai-hackathon-2026
+
+# 2. Create and activate virtual environment
+# Windows PowerShell:
 python -m venv .venv
 .venv\Scripts\Activate.ps1
 
-# On Linux / macOS:
+# Linux / macOS:
 python3 -m venv .venv
 source .venv/bin/activate
-```
 
-### Step 3: Install Required Dependencies
-```bash
+# 3. Install dependencies
 pip install -r requirements.txt
-```
 
-### Step 4: Run the Development Backend
-```bash
-python scripts/run_dev.py
+# 4. Start local development server
+python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+# Or: python scripts/run_dev.py
 ```
-*The service will start on `http://localhost:8000`.*  
-- Open your browser to **`http://localhost:8000/docs`** to view and test all endpoints interactively using Swagger UI.
+*Access local Swagger UI at `http://localhost:8000/docs`.*
 
 ---
 
-## 3. HTTP API Endpoints & Request Examples
+### Option C: Docker Container Deployment
 
-The backend is built using FastAPI and exposes four core endpoints:
-
-### A. Health & Dependency Status (`GET /health`)
 ```bash
-curl -X GET "http://localhost:8000/health"
+# Build Docker image
+docker build -t geoai-backend:latest .
+
+# Run container mapping port 8000
+docker run -d -p 8000:8000 --name geoai-service geoai-backend:latest
+
+# Check container logs
+docker logs -f geoai-service
+```
+
+---
+
+## 3. HTTP API Endpoints & Usage Guide
+
+The backend exposes four core REST endpoints:
+
+### 1. Service Health & Model Status (`GET /health`)
+```bash
+curl -X GET "https://geoai-hackathon-2026.onrender.com/health"
 ```
 **Example Response:**
 ```json
@@ -84,22 +187,24 @@ curl -X GET "http://localhost:8000/health"
 }
 ```
 
-### B. List Supported Activities (`GET /activities`)
+### 2. List Supported Activities (`GET /activities`)
 ```bash
-curl -X GET "http://localhost:8000/activities"
+curl -X GET "https://geoai-hackathon-2026.onrender.com/activities"
 ```
-Returns metadata for all 10 activities: Running, Cycling, Golf, Cricket, Football, Tennis, Hiking, Picnic, Outdoor Gathering, and Photography.
+Returns domain metadata and safety parameters for all 10 activities: Running, Cycling, Golf, Cricket, Football, Tennis, Hiking, Picnic, Outdoor Gathering, and Photography.
 
-### C. List External Data Sources & Attribution (`GET /sources`)
+### 3. List Data Sources & Licensing (`GET /sources`)
 ```bash
-curl -X GET "http://localhost:8000/sources"
+curl -X GET "https://geoai-hackathon-2026.onrender.com/sources"
 ```
 Returns licensing, terms of use, and endpoints for OpenStreetMap Nominatim, Overpass API, Open-Meteo Weather, Open-Meteo Air Quality, and Project OSRM.
 
-### D. Generate Grounded Recommendation (`POST /recommend`)
-#### Request 1: Location by Coordinates
+### 4. Generate Grounded Recommendation (`POST /recommend`)
+*(Aliases: `POST /query`, `POST /ask`)*
+
+#### Example 1: Location by Coordinates
 ```bash
-curl -X POST "http://localhost:8000/recommend" \
+curl -X POST "https://geoai-hackathon-2026.onrender.com/recommend" \
      -H "Content-Type: application/json" \
      -d '{
        "activity": "Cricket",
@@ -109,9 +214,9 @@ curl -X POST "http://localhost:8000/recommend" \
      }'
 ```
 
-#### Request 2: Location by Placename Query with User Constraints
+#### Example 2: Location by Placename with Constraints
 ```bash
-curl -X POST "http://localhost:8000/recommend" \
+curl -X POST "https://geoai-hackathon-2026.onrender.com/recommend" \
      -H "Content-Type: application/json" \
      -d '{
        "activity": "Running or Jogging",
@@ -122,18 +227,16 @@ curl -X POST "http://localhost:8000/recommend" \
      }'
 ```
 
-#### Request 3: Free-Form Natural Language Question (Rulebook Format)
+#### Example 3: Natural Language Free-Form Question
 ```bash
-curl -X POST "http://localhost:8000/recommend" \
+curl -X POST "https://geoai-hackathon-2026.onrender.com/recommend" \
      -H "Content-Type: application/json" \
      -d '{
        "query": "Where can I go running tomorrow evening near Koregaon Park?"
      }'
 ```
-*(Also accessible via `POST /query` and `POST /ask`)*
 
-
-#### Example Validated Schema Response:
+#### Complete Validated Response Structure:
 ```json
 {
   "activity_name": "Running or Jogging",
@@ -177,13 +280,13 @@ curl -X POST "http://localhost:8000/recommend" \
     {
       "provider": "Open-Meteo Weather Forecast API",
       "service_type": "Numerical Weather Prediction",
-      "retrieval_timestamp": "2026-10-23T15:58:40.125000+00:00",
+      "retrieval_timestamp": "2026-10-24T12:00:00+00:00",
       "attribution": "Weather data by Open-Meteo.com (CC BY 4.0)"
     },
     {
       "provider": "OpenStreetMap Overpass API",
       "service_type": "Geospatial Features",
-      "retrieval_timestamp": "2026-10-23T15:58:41.210000+00:00",
+      "retrieval_timestamp": "2026-10-24T12:00:00+00:00",
       "attribution": "© OpenStreetMap contributors"
     }
   ],
@@ -199,103 +302,135 @@ curl -X POST "http://localhost:8000/recommend" \
 
 ## 4. Deterministic Safety Guardrails
 
-The assistant implements authoritative scientific rules that cannot be bypassed by language model hallucinations:
-1. **WHO Solar UV Index:** UV $\ge 11.0$ strictly mandates `not_recommended` for strenuous daytime cardio; UV $\ge 8.0$ mandates caution and shade.
-2. **NOAA / NWS Heat Stress:** Apparent temperature (Heat Index) $\ge 40.0^\circ\text{C}$ strictly mandates `not_recommended` due to exertional heat stroke risk.
-3. **US EPA Air Quality Index:** US AQI $> 300$ or PM2.5 $> 250\,\mu\text{g/m}^3$ blocks all outdoor physical activities; AQI 201–300 blocks high-intensity athletics.
-4. **NWS Convective Storm / Lightning:** WMO codes 95, 96, 99 strictly block open-field sports (golf, cricket, soccer) with zero lightning protection.
-5. **WMO Gale Wind:** Wind gusts $> 65\text{ km/h}$ block cycling and outdoor sports due to falling debris hazard.
-6. **Deterministic Override:** If the SLM generates `recommended` under any hazardous condition, `apply_guardrail_override()` forcibly overrides the suitability to `not_recommended`, logs the override event, and injects the scientific rationale.
+Language models can hallucinate or display optimism bias under hazardous weather. To ensure 100% human safety, our system couples generative recommendations with **authoritative scientific guardrails** (`app/safety/rules.py`):
+
+| Rule Code | Authoritative Source | Threshold Trigger | Enforced Action |
+| :--- | :--- | :--- | :--- |
+| `WHO_UV_EXTREME` | WHO / US EPA Global Solar UV Index | UV Index $\ge 11.0$ | Mandates `not_recommended` for daytime cardio; enforces SPF 50+ |
+| `NOAA_HEAT_INDEX_DANGER` | NOAA / NWS Heat Stress Index | Apparent Temp $\ge 40.0^\circ\text{C}$ | Mandates `not_recommended` due to exertional heatstroke hazard |
+| `EPA_AQI_HAZARDOUS` | US EPA Air Quality Index | US AQI $> 300$ or PM2.5 $> 250\,\mu\text{g/m}^3$ | Strictly blocks all outdoor physical activities |
+| `EPA_AQI_VERY_UNHEALTHY` | US EPA Air Quality Index | US AQI 201–300 | Blocks high-intensity athletics (Running, Football, Cycling) |
+| `NWS_LIGHTNING_RISK` | NOAA National Weather Service | WMO codes 95, 96, 99 (Thunderstorms) | Blocks open-field sports (Golf, Cricket, Soccer) with 0 shelter |
+| `GALE_WIND_HAZARD` | WMO Wind Classification | Wind gusts $> 65\text{ km/h}$ | Blocks cycling and outdoor athletics due to debris/trauma risk |
+
+**Deterministic Override Engine:**  
+If the generative SLM generates `recommended` or `partially_recommended` during any hazardous condition, `apply_guardrail_override()` forcibly overrides the suitability to `not_recommended`, logs the override event, and injects the verified scientific rationale into `reasons`.
 
 ---
 
-## 5. LoRA Fine-Tuning Pipeline
+## 5. Model Fine-Tuning & Hugging Face Repository
 
-A complete, reproducible LoRA fine-tuning workflow is implemented in `training/`:
+The custom LoRA adapter is published on Hugging Face:  
+🔗 **[Erevanox/geoai-qwen2.5-1.5b-outdoor-lora](https://huggingface.co/Erevanox/geoai-qwen2.5-1.5b-outdoor-lora)**
 
+### LoRA Specifications:
+- **Base Model:** `Qwen/Qwen2.5-1.5B-Instruct` (1.54B Parameters, Apache-2.0)
+- **Trainable Parameters:** 1,089,536 (0.0705% of base model)
+- **Adapter Configuration:** PEFT LoRA (Rank $r=8$, Alpha $\alpha=16$, Target modules `["q_proj", "v_proj"]`, Dropout $0.05$)
+- **Weights Size:** 4.37 MB (`adapter_model.safetensors`)
+
+### Running Inference via Hugging Face PEFT:
+```python
+import torch
+from transformers import AutoModelForCausalLM, AutoTokenizer
+from peft import PeftModel
+
+base_model_id = "Qwen/Qwen2.5-1.5B-Instruct"
+adapter_id = "Erevanox/geoai-qwen2.5-1.5b-outdoor-lora"
+
+# Load tokenizer and base model
+tokenizer = AutoTokenizer.from_pretrained(base_model_id)
+base_model = AutoModelForCausalLM.from_pretrained(
+    base_model_id,
+    torch_dtype=torch.float32,
+    device_map="auto"
+)
+
+# Attach fine-tuned LoRA adapter
+model = PeftModel.from_pretrained(base_model, adapter_id)
+model.eval()
+
+# Prompt with environmental evidence
+messages = [
+    {"role": "system", "content": "You are a grounded GeoAI outdoor safety assistant..."},
+    {"role": "user", "content": "Activity: Running | Location: Bandra Bandstand | Temp: 34C | UV: 11.2 | AQI: 75"}
+]
+formatted = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
+inputs = tokenizer(formatted, return_tensors="pt")
+
+with torch.no_grad():
+    outputs = model.generate(**inputs, max_new_tokens=400, do_sample=False)
+
+response = tokenizer.decode(outputs[0][inputs.input_ids.shape[1]:], skip_special_tokens=True)
+print(response)
+```
+
+### Reproducible Training Pipeline:
+All scripts to prepare datasets, validate schema compliance, and train adapters are contained in `training/`:
 ```bash
 # 1. Prepare and validate JSONL datasets
 python training/prepare_dataset.py
 python training/validate_dataset.py
 
-# 2. Train LoRA adapter locally (CPU smoke run)
-python training/train_lora.py --max-steps 1 --device cpu --output-dir huggingface_model
+# 2. Train LoRA adapter locally or on cloud GPU
+python training/train_lora.py --epochs 3 --max-steps 50 --output-dir huggingface_model
 
-# 3. Cloud GPU training (Google Colab T4 / Kaggle)
-python training/train_lora.py --epochs 3 --max-steps 50 --device cuda --output-dir huggingface_model
-
-# 4. Evaluate adapter against held-out test split
+# 3. Evaluate adapter against held-out test split
 python training/evaluate_adapter.py --eval-data datasets/eval_recommendations.jsonl
 ```
 
-### Model Artifacts in `huggingface_model/`:
-- `adapter_model.safetensors` (4.37 MB trained weights, 1,089,536 trainable parameters, rank 8, alpha 16)
-- `adapter_config.json` (explicitly pointing to `base_model_name_or_path: "Qwen/Qwen2.5-1.5B-Instruct"`)
-- `README.md` (official Hugging Face Model Card with Apache 2.0 license)
-- `training_metrics.json` (recorded loss and training timestamps)
-
 ---
 
-## 6. Running the Automated Test Suite
+## 6. Automated Testing & Verification
 
-To run the complete automated test suite (41 tests):
+The repository contains an automated test suite verifying model quantization, live APIs, safety guardrails, and schema conformance:
 
 ```bash
-# Run the fast automated evaluation runner (32 unit tests, ~10s)
+# Run fast automated evaluation runner (32 unit tests, ~10s)
 python scripts/run_eval_suite.py
 
-# Or run pytest directly across all unit & live integration tests (41 tests)
+# Run complete pytest suite (41 tests passing)
 python -m pytest tests/ -v
 ```
 
+### Test Coverage Highlights:
+- **Unit Tests:** Health check, activity catalog, source attribution, query parser, safety guardrail overrides.
+- **Integration Tests:** Live Open-Meteo weather and air quality fetches, Nominatim geocoding, Overpass POI retrieval.
+- **Model Tests:** OpenVINO INT4 model loading, inference benchmark, LoRA adapter parameter compliance ($\le 3\text{B}$).
+- **Schema Validation:** Strict adherence of all recommendation outputs to `schemas/recommendation.schema.json`.
+
 ---
 
-## 7. Presentation Deliverable
+## 7. Deliverables & Submission Status
 
-- **Editable PowerPoint Presentation:** `presentation.pptx` (6 widescreen slides generated via `scripts/export_presentation.py`).
-- **Markdown Slide Script:** `PRESENTATION.md` (Full slide content, diagrams, and speaking notes).
+All requirements outlined in the **GeoAI Hackathon 2026 Rulebook** have been completed, verified, and deployed:
+
+| Deliverable | Status | Verification & Link |
+| :--- | :---: | :--- |
+| **Public GitHub Repository** | **COMPLETED** | [github.com/Mukilan-int/geoai-hackathon-2026](https://github.com/Mukilan-int/geoai-hackathon-2026) |
+| **Live Deployed API Service** | **COMPLETED** | [geoai-hackathon-2026.onrender.com](https://geoai-hackathon-2026.onrender.com) (Deployed on Render via Docker) |
+| **Interactive API Documentation** | **COMPLETED** | [geoai-hackathon-2026.onrender.com/docs](https://geoai-hackathon-2026.onrender.com/docs) (Swagger UI) |
+| **Hugging Face Model & LoRA Adapter** | **COMPLETED** | [huggingface.co/Erevanox/geoai-qwen2.5-1.5b-outdoor-lora](https://huggingface.co/Erevanox/geoai-qwen2.5-1.5b-outdoor-lora) |
+| **Model Size Limit ($\le 3\text{B}$ parameters)** | **COMPLETED** | Base model has 1.54B parameters + 1.09M LoRA adapter parameters |
+| **10 Supported Activities** | **COMPLETED** | Running, Cycling, Golf, Cricket, Football, Tennis, Hiking, Picnic, Events, Photography |
+| **Live Open Data Integration** | **COMPLETED** | Open-Meteo Weather/AQ + OpenStreetMap Nominatim/Overpass (Zero paid/proprietary APIs) |
+| **Deterministic Safety Overrides** | **COMPLETED** | Scientific thresholds (WHO UV, NOAA Heat, EPA AQI, NWS Lightning) strictly enforced |
+| **Validated Machine-Readable JSON** | **COMPLETED** | Validated against `schemas/recommendation.schema.json` |
+| **Presentation Deliverable** | **COMPLETED** | `presentation.pptx` (6 widescreen slides) and `PRESENTATION.md` |
+| **Automated Test Suite** | **COMPLETED** | 41/41 automated tests passing (`pytest tests/`) |
 
 ---
 
 ## 8. OpenStreetMap & Live Data Attribution
 
+In compliance with OpenStreetMap and Open-Meteo terms of service:
 - **OpenStreetMap Data:** Mapped features, park boundaries, and geocoding results are licensed under the [Open Data Commons Open Database License (ODbL) 1.0](https://opendatacommons.org/licenses/odbl/) by the OpenStreetMap Foundation. Attribution: **`© OpenStreetMap contributors`** ([https://www.openstreetmap.org/copyright](https://www.openstreetmap.org/copyright)).
 - **Weather and Air Quality Data:** Provided by [Open-Meteo.com](https://open-meteo.com/) under the [Creative Commons Attribution 4.0 International (CC BY 4.0)](https://creativecommons.org/licenses/by/4.0/) license.
 - **Routing Data:** Powered by Project OSRM and OpenStreetMap.
 
 ---
 
-## 9. Status of Deliverables & Remaining User Steps
+## 9. License
 
-### What is 100% Completed & Verified:
-1. Full backend architecture (`app/`) with zero proprietary hosted LLM dependencies.
-2. OpenVINO INT4 quantized model integration and PyTorch base model compatibility.
-3. PEFT LoRA training pipeline executed locally (`adapter_model.safetensors` generated).
-4. All 10 outdoor activities fully configured with metabolic and weather sensitivities.
-5. Live integrations with Open-Meteo (Weather & AQ) and OpenStreetMap (Nominatim & Overpass).
-6. Natural language query understanding (`parse_free_form_query`) matching Rulebook evaluation queries.
-7. Deterministic safety guardrails preventing unsafe model approvals.
-8. Strict JSON Schema validation conforming to `schemas/recommendation.schema.json`.
-9. Complete test suite (41 tests passing).
-10. Editable 6-slide PowerPoint presentation (`presentation.pptx`) and `PRESENTATION.md`.
-11. Multi-stage `Dockerfile`, `.env.example`, `.gitignore`, and documentation reports.
-
-
-
-### Remaining Manual Steps for Hackathon Submission:
-1. **Upload LoRA Adapter to Hugging Face:**
-   ```bash
-   huggingface-cli login
-   huggingface-cli upload YOUR_HF_USERNAME/geoai-qwen2.5-1.5b-outdoor-lora ./huggingface_model .
-   ```
-2. **Push to Public GitHub Repository:**
-   ```bash
-   git init
-   git add .
-   git commit -m "GeoAI Hackathon 2026: Complete Backend & Model Implementation"
-   git branch -M main
-   git remote add origin https://github.com/YOUR_USERNAME/geoai-hackathon-2026.git
-   git push -u origin main
-   ```
-3. **Deploy to Public Cloud Endpoint:**
-   Follow `DEPLOYMENT.md` to deploy the repository to Render.com, Railway.app, or Hugging Face Spaces Docker to obtain a public live judging URL.
+This project is licensed under the **Apache License 2.0** — see the [LICENSE](LICENSE) file for details.  
+Base model weights `Qwen/Qwen2.5-1.5B-Instruct` are released under the Apache 2.0 License by the Qwen Team / Alibaba Cloud.
